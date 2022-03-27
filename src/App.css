@@ -1,6 +1,15 @@
-.App {
+
+@import "../node_modules/@syncfusion/ej2-base/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-buttons/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-lists/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-inputs/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-popups/styles/material.css";
+@import "../node_modules/@syncfusion/ej2-react-calendars/styles/material.css";
+
+
+/* .App {
   text-align: center;
-}
+} */
 
 .App-logo {
   height: 40vmin;
@@ -35,4 +44,64 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+.app {
+  margin: 50px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 900px;
+}
+
+
+.search {
+  padding: 10px;
+  font-size: 20px;
+}
+
+.list {
+  padding: 0;
+  list-style: none;
+  text-align: center;
+}
+
+.listItem {
+  margin-bottom: 20px;
+  font-size: 25px;
+  color: #444;
+  font-weight: 300;
+}
+
+table {
+  width: 100%;
+  margin: 50px 0px;
+  border-spacing: 15px;
+  color: #444;
+  text-align: left;
+}
+
+tr {
+  margin-bottom: 20px;
+}
+
+th {
+  width: 250px;
+  text-align: left;
+  font-size: 20px;
+}
+
+td {
+  width: 250px;
+  font-size: 20px;
+}
+
+.footer{
+  margin-top: 1rem;
+  padding: 1rem;
+  background-color: rgb(235, 195, 64);
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
 }
