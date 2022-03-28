@@ -3,18 +3,15 @@ import ReactDOM from "react-dom";
 import CRUDTable, {
   Fields,
   Field,
-  CreateForm,
-  UpdateForm,
-  DeleteForm
 } from "react-crud-table";
 
 // Component's Base CSS
 import "../../crudTable.css";
 import { getStocksTransactions } from "../../services";
 
-function TransactionHistory(){
+function Portfolio(){
   
- const [transactions, setTransactions] = useState([]);
+const [transactions, setTransactions] = useState([]);
 
 //let transactions = []
 useEffect(() => {
@@ -75,7 +72,7 @@ const service = {
   fetchItems: (payload) => {
     let result = Array.from(transactions);
     result = result.sort(getSorter(payload.sort));
-    //console.log(result);
+    console.log(result);
     return Promise.resolve(result);
   }  
 };
@@ -111,4 +108,4 @@ return(
 }
 
 
-export default TransactionHistory;
+export default Portfolio;

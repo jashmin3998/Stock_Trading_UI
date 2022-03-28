@@ -19,3 +19,7 @@ export const setSchedule = async body => {
 export const getStocks = async body => {
   return await nodeAxios.get('stocks/allstocks')
 }
+
+export const getStocksTransactions =async body => {
+  return await nodeAxios.get('stocks/transaction-history', body)
+}

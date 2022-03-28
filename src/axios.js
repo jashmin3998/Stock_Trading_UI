@@ -1,5 +1,6 @@
 import ax from 'axios'
 
+//http://ec2-54-84-200-65.compute-1.amazonaws.com:8080/
 const BaseApiURL = "http://localhost:8080/"
 export const nodeAxios = ax.create({
   baseURL: `${BaseApiURL}`,

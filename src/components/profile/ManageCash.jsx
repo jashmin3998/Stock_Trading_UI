@@ -1,88 +1,87 @@
-import React from "react";
+import React, { useState ,useEffect} from "react";
+import ReactDOM from "react-dom";
 import CRUDTable, {
-    Fields,
-    Field,
-    CreateForm,
-    UpdateForm,
-    DeleteForm
-  } from "react-crud-table";
+  Fields,
+  Field,
+  CreateForm,
+  UpdateForm,
+  DeleteForm
+} from "react-crud-table";
+import { getStocksTransactions } from "../../services";
 
-function ManageCash(){
+export function ManageCash(){
 
-    let locations = [
-        { id: "1", location: "39357 Hirthe Isle", description: "synergy" },
-        {
-          id: "2",
-          location: "062 Hayes Port",
-          description:
-            "generate Bond Markets Units European Composite Unit (EURCO) haptic"
-        },
-        { id: "3", location: "238 Garret Village", description: "Nauru" },
-        { id: "4", location: "518 Jared Fort", description: "RSS" },
-        { id: "5", location: "7440 Dallas Summit", description: "model customized" },
+  const [transactions, setTransactions] = useState([]);
+
+  //let transactions = []
+  useEffect(() => {
+    const fetchData = async () =>{
+        const res = await getStocksTransactions(
+          // username: window.localStorage.getItem("username")
+          { params: { username: window.localStorage.getItem("username") } }
+        );
+        var jsonData = res.data;
+  
+        var allData = []
+          for (var i = 0; i < jsonData.length; i++) {
+              var counter = {
+                              "transactionTime": String(new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(jsonData[i].transactionTime)),
+                              "stockSymbol": jsonData[i].stock.stockSymbol,
+                              "quantity": String(jsonData[i].quantity),
+                              "purchasedRate": String(jsonData[i].purchasedRate),
+                              "totalAmount": String(jsonData[i].totalAmount)
+                            }
+              allData.push(counter)
+          }
+  
+          setTransactions(allData)
         
-      ];
-      
-      const SORTERS = {
-        NUMBER_ASCENDING: (mapper) => (a, b) => mapper(a) - mapper(b),
-        NUMBER_DESCENDING: (mapper) => (a, b) => mapper(b) - mapper(a),
-        STRING_ASCENDING: (mapper) => (a, b) => mapper(a).localeCompare(mapper(b)),
-        STRING_DESCENDING: (mapper) => (a, b) => mapper(b).localeCompare(mapper(a))
-      };
-      
-      const getSorter = (data) => {
-        const mapper = (x) => x[data.field];
-        let sorter = SORTERS.STRING_ASCENDING(mapper);
-      
-        if (data.field === "id") {
-          sorter =
-            data.direction === "ascending"
-              ? SORTERS.NUMBER_ASCENDING(mapper)
-              : SORTERS.NUMBER_DESCENDING(mapper);
-        } else {
-          sorter =
-            data.direction === "ascending"
-              ? SORTERS.STRING_ASCENDING(mapper)
-              : SORTERS.STRING_DESCENDING(mapper);
-        }
-      
-        return sorter;
-      };
-      
-      let count = locations.length;
-      const service = {
-        fetchItems: (payload) => {
-          let result = Array.from(locations);
-          result = result.sort(getSorter(payload.sort));
-          return Promise.resolve(result);
-        },
-        create: (location) => {
-          count += 1;
-          locations.push({
-            ...location,
-            id: count
-          });
-          return Promise.resolve(location);
-        },
-        update: (data) => {
-          const location = locations.find((t) => t.id === data.id);
-          location.title = data.title;
-          location.description = data.description;
-          return Promise.resolve(location);
-        },
-        delete: (data) => {
-          const location = locations.find((t) => t.id === data.id);
-          locations = locations.filter((t) => t.id !== location.id);
-          return Promise.resolve(location);
-        }
-      };
-      
-      const styles = {
-        container: { margin: "auto", width: "fit-content" }
-      };
-
-
-const ViewStatement = () => (
+    }
+    fetchData();
+  }, []);
+  
+  
+  const SORTERS = {
+    NUMBER_ASCENDING: (mapper) => (a, b) => mapper(a) - mapper(b),
+    NUMBER_DESCENDING: (mapper) => (a, b) => mapper(b) - mapper(a),
+    STRING_ASCENDING: (mapper) => (a, b) => mapper(a).localeCompare(mapper(b)),
+    STRING_DESCENDING: (mapper) => (a, b) => mapper(b).localeCompare(mapper(a))
+  };
+  
+  const getSorter = (data) => {
+    const mapper = (x) => x[data.field];
+    let sorter = SORTERS.STRING_ASCENDING(mapper);
+  
+    if (data.field === "id") {
+      sorter =
+        data.direction === "ascending"
+          ? SORTERS.NUMBER_ASCENDING(mapper)
+          : SORTERS.NUMBER_DESCENDING(mapper);
+    } else {
+      sorter =
+        data.direction === "ascending"
+          ? SORTERS.STRING_ASCENDING(mapper)
+          : SORTERS.STRING_DESCENDING(mapper);
+    }
+  
+    return sorter;
+  };
+  
+  let count = transactions.length;
+  const service = {
+    fetchItems: (payload) => {
+      let result = Array.from(transactions);
+      result = result.sort(getSorter(payload.sort));
+      //console.log(result);
+      return Promise.resolve(result);
+    }  
+  };
+  
+  const styles = {
+    container: { margin: "auto", width: "fit-content" }
+  };
+  
+  const Example = () => (
     <div style={styles.container}>
       <CRUDTable
         caption="Transaction History"
@@ -90,24 +89,20 @@ const ViewStatement = () => (
         
       >
         <Fields>
-          <Field name="id" label="Id" hideInCreateForm   />
-          <Field name="date" label="Date" placeholder="date"  />
-          <Field name="stock" label="Stock" placeholder="Stock"  />
+          {/* <Field name="id" label="Id" hideInCreateForm   /> */}
+          <Field name="transactionTime" label="Date" placeholder="date"  />
+          <Field name="stockSymbol" label="Stock" placeholder="Stock"  />
           <Field name="quantity" label="Quantity" placeholder="quanytity"  />
-          <Field name="rate" label="Rate" placeholder="rate"  />
-          <Field name="amount" label="Amount" placeholder="amount"  />
-  
+          <Field name="purchasedRate" label="Rate" placeholder="rate"  />
+          <Field name="totalAmount" label="Amount" placeholder="amount"  />
         </Fields>
         
       </CRUDTable>
     </div>
   );
-
+  Example.propTypes = {};
   return(
-    <>
-      <CashInfo />
-      <ViewStatement />
-    </>
+    <Example/>
   )
 }
 
@@ -121,7 +116,9 @@ const CashInfo = () => {
         <button className="col-1 btn btn-success mr-2">Add</button>
         <button className="col-1 btn btn-danger ml-2">Withdraw</button>
       </div>
+
+      <ManageCash />
     </>
   )
 }
-export default ManageCash;
+export default CashInfo;

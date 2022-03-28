@@ -2,6 +2,7 @@
   "name": "stock_trading_system",
   "version": "0.1.0",
   "private": true,
+  "homepage": "http://localhost/stock-trading",
   "dependencies": {
     "@emotion/react": "^11.8.2",
     "@emotion/styled": "^11.8.1",

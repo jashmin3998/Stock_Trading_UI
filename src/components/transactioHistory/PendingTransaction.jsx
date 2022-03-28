@@ -12,9 +12,9 @@ import CRUDTable, {
 import "../../crudTable.css";
 import { getStocksTransactions } from "../../services";
 
-function TransactionHistory(){
+function PendingTransaction(){
   
- const [transactions, setTransactions] = useState([]);
+const [transactions, setTransactions] = useState([]);
 
 //let transactions = []
 useEffect(() => {
@@ -111,4 +111,4 @@ return(
 }
 
 
-export default TransactionHistory;
+export default PendingTransaction;
