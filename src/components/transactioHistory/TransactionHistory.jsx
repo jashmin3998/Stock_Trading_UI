@@ -88,8 +88,7 @@ const Example = () => (
   <div style={styles.container}>
     <CRUDTable
       caption="Transaction History"
-      fetchItems={(payload) => service.fetchItems(payload)}
-      
+      fetchItems={(payload) => service.fetchItems(payload)}  
     >
       <Fields>
         {/* <Field name="id" label="Id" hideInCreateForm   /> */}
@@ -101,6 +100,7 @@ const Example = () => (
       </Fields>
       
     </CRUDTable>
+    
   </div>
 );
 Example.propTypes = {};

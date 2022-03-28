@@ -7,8 +7,8 @@ function AddStock(){
 
     const[stockName, setStockName] = useState("Tesla")
     const[sSymbol, setSSymbol] = useState("TSL")
-    const[totalQuantity, setTotalQuantity] = useState(100000)
-    const[purchasedQuantity, setPurchasedQuantity] = useState(20000)
+    const[totalQty, setTotalQty] = useState(100000)
+    const[purchasedQty, setPurchasedQty] = useState(20000)
     const[intialPrice, setIntialPrice] = useState(852)
     const[creationDate, setCreationDate] = useState()
     const[error, setError] = useState("")
@@ -22,38 +22,38 @@ function AddStock(){
         setSSymbol(event.target.value) 
     }
     const handleTotalQuantityChange=(event) =>{
-        setTotalQuantity(event.target.value) 
+        setTotalQty(event.target.value) 
     }
 
     const handlePurchasedQuantityChange=(event) =>{
-        setPurchasedQuantity(event.target.value) 
+        setPurchasedQty(event.target.value) 
     }
     const handleIntialPriceChange=(event) =>{
         setIntialPrice(event.target.value) 
     }
 
-    const handleCreationDateChange=(event) =>{
-        setCreationDate(event.target.value) 
-    }
+    // const handleCreationDateChange=(event) =>{
+    //     setCreationDate(event.target.value) 
+    // }
 
     
 
     async function addClicked(){
         try {
 
-            var total_quantity = parseInt(totalQuantity, 10);
-            var purchased_quantity = parseInt(purchasedQuantity, 10) 
+            var totalQuantity = parseInt(totalQty, 10);
+            var purchasedQuantity = parseInt(purchasedQty, 10) 
             var price = parseFloat(intialPrice)
             var stockSymbol = sSymbol
             var name = stockName
-            var creation_time = creationDate
+            var creationTime = creationDate
             const response = await addStock({
                 name,
                 stockSymbol,
-                total_quantity,
-                purchased_quantity,
+                totalQuantity,
+                purchasedQuantity,
                 price,
-                creation_time
+                creationTime
             })
 
             if(response.data.success){
@@ -77,14 +77,38 @@ function AddStock(){
 
 
     return(
-        <div className='Add'>
-            
-                {/*<ShowLoginSuccessMessage showSuccessMessage={this.state.showSuccessMessage}/>*/}
-            Stock Name: <input type="text" name="name" value={stockName} onChange={handleStockNameChange} />
-            Stock Symbol: <input type="text" name="sSymbol" value={sSymbol} onChange={handleSSymbolChange} />
-            Total Quantity: <input type="number" name="totalQuantity" value={totalQuantity} onChange={handleTotalQuantityChange} />
-            Purchased Quantity: <input type="number" name="purchasedQuantity" value={purchasedQuantity} onChange={handlePurchasedQuantityChange} />
-            Price: <input type="number" name="intialPrice" value={intialPrice} onChange={handleIntialPriceChange} />
+        <div className='Login d-flex flex-column align-items-center'>
+            <h3> Add New Stock </h3>
+            <div className='row col-2 mt-2'>
+                Stock Name: 
+            </div>
+            <div className='row col-2 mb-2'>
+                <input type="text" name="name" value={stockName} onChange={handleStockNameChange} />
+            </div>
+            <div className='row col-2 mt-2'>
+                Stock Symbol: 
+            </div>
+            <div className='row col-2 mb-2'>
+                <input type="text" name="sSymbol" value={sSymbol} onChange={handleSSymbolChange} />
+            </div>
+            <div className='row col-2 mt-2'>
+                Total Quantity: 
+            </div>
+            <div className='row col-2 mb-2'>
+                <input type="number" name="totalQuantity" value={totalQty} onChange={handleTotalQuantityChange} />
+            </div>
+            <div className='row col-2 mt-2'>
+                Purchased Quantity: 
+            </div>
+            <div className='row col-2 mb-2'>
+                <input type="number" name="purchasedQuantity" value={purchasedQty} onChange={handlePurchasedQuantityChange} />
+            </div>
+            <div className='row col-2 mt-2'>
+                Price: 
+            </div>
+            <div className='row col-2 mb-2'>
+                <input type="number" name="intialPrice" value={intialPrice} onChange={handleIntialPriceChange} />
+            </div>
             
             <button className="btn btn-success" onClick={addClicked}>Add</button>
             

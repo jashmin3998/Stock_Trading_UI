@@ -83,7 +83,9 @@ function FooterOption(data){
 function TrasactionForm({
     show,
     setShow
-}){
+})
+
+{
 
   
 

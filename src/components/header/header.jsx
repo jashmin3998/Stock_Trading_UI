@@ -1,5 +1,6 @@
 import React from "react";
 import {Navbar, Nav, Container, NavDropdown} from 'react-bootstrap'
+import { Route , withRouter, useNavigate} from 'react-router-dom';
 
 function Header(){
     const isLoggedIn = window.localStorage.getItem("username") ? true : false;
@@ -37,9 +38,20 @@ function LoggedOutHeader(){
 }
 
 function LoggedInHeader(){
+
+    //const navigate = useNavigate();
+
+    function clickedLogout(){
+        window.localStorage.clear();
+        //navigate("/home");
+    }
     return (
         <>
         <Nav className="me-auto">
+            <NavDropdown title="Manage" id="basic-nav-dropdown">
+                    <NavDropdown.Item href="#/stock-trading/manage-stock">Add Stock</NavDropdown.Item>
+                    <NavDropdown.Item href="#/stock-trading/manage-schedule">Manage Schedule</NavDropdown.Item>
+            </NavDropdown>
             <Nav.Link href="#/stock-trading/portfolio">Portfolio</Nav.Link>
             <Nav.Link href="#/stock-trading/pending-orders">Pending Orders</Nav.Link>
             <Nav.Link href="#/stock-trading/transaction-history">History</Nav.Link>
@@ -48,9 +60,9 @@ function LoggedInHeader(){
                 <NavDropdown title="Profile" id="basic-nav-dropdown">
                     <NavDropdown.Item >{window.localStorage.getItem("username")}</NavDropdown.Item>
                     <NavDropdown.Item href="#/stock-trading/manage-cash">Manage Cash</NavDropdown.Item>
-                    <NavDropdown.Item href="#action/3.3">View Statement</NavDropdown.Item>
+                    <NavDropdown.Item href="#/stock-trading/view-statement">View Statement</NavDropdown.Item>
                     <NavDropdown.Divider></NavDropdown.Divider>
-                    <NavDropdown.Item href="#action/3.3">Logout</NavDropdown.Item>
+                    <NavDropdown.Item href= "#/stock-trading/login" onClick={clickedLogout}>Logout</NavDropdown.Item>
                 </NavDropdown>
                 
             </Nav>

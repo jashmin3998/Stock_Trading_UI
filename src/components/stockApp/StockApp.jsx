@@ -9,7 +9,7 @@ import AddStock from "../stocks/addStock";
 import ScheduleMarket from "../schedule/schedule";
 import StockDtl from "../home/StockDtl";
 import TransactionHistory from "../transactioHistory/TransactionHistory";
-import {ManageCash} from "../profile/ManageCash";
+import CashInfo, {ManageCash} from "../profile/ManageCash";
 import PendingTransaction from "../transactioHistory/PendingTransaction";
 import Portfolio from "../transactioHistory/Portfolio";
 
@@ -26,12 +26,19 @@ function StockApp(){
                         <Route path="/register" element={<Register />}/>
                         <Route path="/stocks/add" element={<AddStock />}/>
                         <Route path="/stocksDetail" element ={<StockDtl/>}/>
-                        <Route path="/schedule" element ={<ScheduleMarket/>}/>
                         <Route path="/transaction-history" element ={<TransactionHistory/>}/>
-                        <Route path="/manage-cash" element={<ManageCash/>} />
+                        <Route path="/manage-cash" element={<CashInfo/>} />
+                        <Route path="/view-statement" element={<ManageCash/>} />
                         <Route path="/pending-orders" element={<PendingTransaction />} />
                         <Route path="/portfolio" element={<Portfolio />} />
+                        
+                        {/* //Admin access */}
+
+                        <Route path="/manage-stock" element={<AddStock />} />
+                        <Route path="/manage-schedule" element={<ScheduleMarket />} />
+
                         <Route path="*" element={<ErrorComponent />} />
+
                     </Routes>
                 </Router>
                 

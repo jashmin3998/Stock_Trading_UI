@@ -1,4 +1,4 @@
-import React from "react";
+import {React, useState, useEffect} from "react";
 import ReactDOM from "react-dom";
 import CRUDTable, {
   Fields,
@@ -10,23 +10,39 @@ import CRUDTable, {
 
 // Component's Base CSS
 import "../../crudTable.css";
+import { getSchedules } from "../../services";
 
 function ScheduleMarket(){
   // const DescriptionRenderer = ({ field }) => <textarea {...field} />;
 
-let locations = [
-  { id: "1", location: "39357 Hirthe Isle", description: "synergy" },
-  {
-    id: "2",
-    location: "062 Hayes Port",
-    description:
-      "generate Bond Markets Units European Composite Unit (EURCO) haptic"
-  },
-  { id: "3", location: "238 Garret Village", description: "Nauru" },
-  { id: "4", location: "518 Jared Fort", description: "RSS" },
-  { id: "5", location: "7440 Dallas Summit", description: "model customized" },
-  
-];
+  const [schedules, setSchedules] = useState([]);
+
+useEffect(() => {
+  const fetchData = async () =>{
+      const res = await getSchedules();
+      var jsonData = res.data;
+
+      var allData = []
+        for (var i = 0; i < jsonData.length; i++) {
+
+            var status = "open"
+            if(jsonData[i].isHoliday == 1){
+              status = "close"
+            }
+            var counter = {
+                            "dates": jsonData[i].dates,
+                            "startTime": String(new Intl.DateTimeFormat('en-US', {hour: '2-digit', minute: '2-digit'}).format(jsonData[i].startTime)),
+                            "endTime": String(new Intl.DateTimeFormat('en-US', {hour: '2-digit', minute: '2-digit'}).format(jsonData[i].endTime)),
+                            "status": status
+                          }
+            allData.push(counter)
+        }
+
+        setSchedules(allData)
+      
+  }
+  fetchData();
+}, []);
 
 const SORTERS = {
   NUMBER_ASCENDING: (mapper) => (a, b) => mapper(a) - mapper(b),
@@ -54,32 +70,32 @@ const getSorter = (data) => {
   return sorter;
 };
 
-let count = locations.length;
+let count = schedules.length;
 const service = {
   fetchItems: (payload) => {
-    let result = Array.from(locations);
-    result = result.sort(getSorter(payload.sort));
+    let result = Array.from(schedules);
+    //result = result.sort(getSorter(payload.sort));
     return Promise.resolve(result);
   },
-  create: (location) => {
-    count += 1;
-    locations.push({
-      ...location,
-      id: count
-    });
-    return Promise.resolve(location);
-  },
-  update: (data) => {
-    const location = locations.find((t) => t.id === data.id);
-    location.title = data.title;
-    location.description = data.description;
-    return Promise.resolve(location);
-  },
-  delete: (data) => {
-    const location = locations.find((t) => t.id === data.id);
-    locations = locations.filter((t) => t.id !== location.id);
-    return Promise.resolve(location);
-  }
+  // create: (location) => {
+  //   count += 1;
+  //   locations.push({
+  //     ...location,
+  //     id: count
+  //   });
+  //   return Promise.resolve(location);
+  // },
+  // update: (data) => {
+  //   const location = locations.find((t) => t.id === data.id);
+  //   location.title = data.title;
+  //   location.description = data.description;
+  //   return Promise.resolve(location);
+  // },
+  // delete: (data) => {
+  //   const location = locations.find((t) => t.id === data.id);
+  //   locations = locations.filter((t) => t.id !== location.id);
+  //   return Promise.resolve(location);
+  // }
 };
 
 const styles = {
@@ -89,26 +105,22 @@ const styles = {
 const Example = () => (
   <div style={styles.container}>
     <CRUDTable
-      caption="Locations"
+      caption="Market Schedule"
       fetchItems={(payload) => service.fetchItems(payload)}
       
     >
       <Fields>
-        <Field name="id" label="Id" hideInCreateForm sortable={false}  />
-        <Field name="location" label="Title" placeholder="Title" sortable={false} />
-        <Field
-          name="description"
-          label="Description"
-          
-          sortable={false}
-        />
+        <Field name="dates" label="Date" placeholder="date"  />
+        <Field name="startTime" label="Start Time" placeholder="startTime"  />
+        <Field name="endTime" label="End Time" placeholder="endTime"  />
+        <Field name="status" label="status" placeholder="status"  />
       </Fields>
-      {/* <CreateForm
-        title="Location Creation"
-        message="Create a new location!"
-        trigger="Create Location"
+      <CreateForm
+        title="Add Schedule"
+        message="Add a new schedule!"
+        trigger="Create Schedule"
         onSubmit={(location) => service.create(location)}
-        submitText="Create"
+        submitText="Add"
         validate={(values) => {
           const errors = {};
           if (!values.title) {
@@ -121,11 +133,11 @@ const Example = () => (
 
           return errors;
         }}
-      /> */}
+      /> 
 
       <UpdateForm
-        title="Location Update Process"
-        message="Update location"
+        title="Schedule Update Process"
+        message="Update Schedule"
         trigger="Update"
         onSubmit={(location) => service.update(location)}
         submitText="Update"
@@ -144,21 +156,6 @@ const Example = () => (
             errors.description = "Please, provide location's description";
           }
 
-          return errors;
-        }}
-      />
-
-      <DeleteForm
-        title="Location Delete Process"
-        message="Are you sure you want to delete the location?"
-        trigger="Delete"
-        onSubmit={(location) => service.delete(location)}
-        submitText="Delete"
-        validate={(values) => {
-          const errors = {};
-          if (!values.id) {
-            errors.id = "Please, provide id";
-          }
           return errors;
         }}
       />

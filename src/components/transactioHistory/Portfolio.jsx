@@ -25,11 +25,11 @@ useEffect(() => {
       var allData = []
         for (var i = 0; i < jsonData.length; i++) {
             var counter = {
-                            "transactionTime": String(new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(jsonData[i].transactionTime)),
                             "stockSymbol": jsonData[i].stock.stockSymbol,
                             "quantity": String(jsonData[i].quantity),
-                            "purchasedRate": String(jsonData[i].purchasedRate),
-                            "totalAmount": String(jsonData[i].totalAmount)
+                            "avgRate": String(jsonData[i].purchasedRate),
+                            "InvestedAmount": String(jsonData[i].totalAmount),
+                            //"currentStatus": String(jsonData[i].totalAmount)
                           }
             allData.push(counter)
         }
