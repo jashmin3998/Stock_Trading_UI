@@ -7,7 +7,7 @@ import Login from './components/login/Login';
 function App() {
   return (
     <div className="App">
-      <Header/>
+      
       <StockApp></StockApp>
      
     </div>

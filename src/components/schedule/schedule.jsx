@@ -10,9 +10,45 @@ import CRUDTable, {
 
 // Component's Base CSS
 import "../../crudTable.css";
-import { getSchedules } from "../../services";
+import { getSchedules, getUserRole, updateSchedules } from "../../services";
+import { timeToseconds } from "../../util";
+
+
 
 function ScheduleMarket(){
+
+  const[error, setError] = useState("")
+  const[isAdmin, setIsAdmin] = useState(false)
+
+  useEffect(()=>{
+      const fetchUserRole = async () =>{
+          try{
+              const res = await getUserRole(
+                  { params: { username: window.localStorage.getItem("username") } }
+              );    
+              if(res){
+                  setIsAdmin(res.data === "ADMIN" ? true: false);
+              }
+          }
+          catch{
+              console.log("Not an admin")
+          }           
+      }
+
+      fetchUserRole();
+
+  },[])
+
+  return(
+      <>
+      {isAdmin && <ManageScheduleMarket />}
+      
+      {isAdmin && <h3>Admin access only</h3>}
+      </>
+  )
+}
+
+function ManageScheduleMarket(){
   // const DescriptionRenderer = ({ field }) => <textarea {...field} />;
 
   const [schedules, setSchedules] = useState([]);
@@ -26,13 +62,14 @@ useEffect(() => {
         for (var i = 0; i < jsonData.length; i++) {
 
             var status = "open"
+           
             if(jsonData[i].isHoliday == 1){
               status = "close"
             }
             var counter = {
                             "dates": jsonData[i].dates,
-                            "startTime": String(new Intl.DateTimeFormat('en-US', {hour: '2-digit', minute: '2-digit'}).format(jsonData[i].startTime)),
-                            "endTime": String(new Intl.DateTimeFormat('en-US', {hour: '2-digit', minute: '2-digit'}).format(jsonData[i].endTime)),
+                            "startTime": String(new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(jsonData[i].startTime)),
+                            "endTime": String(new Intl.DateTimeFormat('en-US', {hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(jsonData[i].endTime)),
                             "status": status
                           }
             allData.push(counter)
@@ -85,12 +122,47 @@ const service = {
   //   });
   //   return Promise.resolve(location);
   // },
-  // update: (data) => {
-  //   const location = locations.find((t) => t.id === data.id);
-  //   location.title = data.title;
-  //   location.description = data.description;
-  //   return Promise.resolve(location);
-  // },
+  update: (data) => {
+    const schedule = schedules.find((t) => t.dates === data.dates);
+    
+    const updateSchedule = async (schedule)=>{
+
+      
+      var start = (new Date(schedule.dates)).getTime() + timeToseconds(schedule.startTime);
+      var end = (new Date(schedule.dates)).getTime() + timeToseconds(schedule.endTime);
+      console.log((new Date(schedule.dates)).getTime())
+      var holiday = schedule.status === "open" ? 0 : 1;
+      let intlDateObj = new Intl.DateTimeFormat('en-US', {
+        timeZone: "America/Phoenix"
+      });
+      console.log(intlDateObj)
+
+      console.log(intlDateObj.format(new Date(schedule.dates)))
+      var schedule ={
+        "todayDate" : schedule.dates,
+        "startTime" : start,
+        "endTime" : end,
+        "isHoliday": holiday
+      }
+      try{
+        const res = await updateSchedules(schedule)
+        if(res.data.success){
+          schedule.startTime = data.startTime;
+          schedule.endTime = data.endTime;
+          schedule.status = data.status;
+        }
+        else{
+          console.log("Schedule upload Fail")
+        }
+        
+      }
+      catch{
+
+      }
+    }
+    updateSchedule(schedule)
+    return Promise.resolve(schedule);
+  },
   // delete: (data) => {
   //   const location = locations.find((t) => t.id === data.id);
   //   locations = locations.filter((t) => t.id !== location.id);
@@ -139,25 +211,25 @@ const Example = () => (
         title="Schedule Update Process"
         message="Update Schedule"
         trigger="Update"
-        onSubmit={(location) => service.update(location)}
+        onSubmit={(schedule) => service.update(schedule)}
         submitText="Update"
-        validate={(values) => {
-          const errors = {};
+        // validate={(values) => {
+        //   const errors = {};
 
-          if (!values.id) {
-            errors.id = "Please, provide id";
-          }
+        //   if (!values.id) {
+        //     errors.id = "Please, provide id";
+        //   }
 
-          if (!values.title) {
-            errors.title = "Please, provide location's title";
-          }
+        //   if (!values.title) {
+        //     errors.title = "Please, provide location's title";
+        //   }
 
-          if (!values.description) {
-            errors.description = "Please, provide location's description";
-          }
+        //   if (!values.description) {
+        //     errors.description = "Please, provide location's description";
+        //   }
 
-          return errors;
-        }}
+        //   return errors;
+        // }}
       />
     </CRUDTable>
   </div>

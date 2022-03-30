@@ -10,7 +10,7 @@ import CRUDTable, {
 
 // Component's Base CSS
 import "../../crudTable.css";
-import { getStocksTransactions } from "../../services";
+import { getPendingOrders, removeLimitOrder } from "../../services";
 
 function PendingTransaction(){
   
@@ -19,7 +19,7 @@ const [transactions, setTransactions] = useState([]);
 //let transactions = []
 useEffect(() => {
   const fetchData = async () =>{
-      const res = await getStocksTransactions(
+      const res = await getPendingOrders(
         // username: window.localStorage.getItem("username")
         { params: { username: window.localStorage.getItem("username") } }
       );
@@ -28,11 +28,13 @@ useEffect(() => {
       var allData = []
         for (var i = 0; i < jsonData.length; i++) {
             var counter = {
-                            "transactionTime": String(new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(jsonData[i].transactionTime)),
-                            "stockSymbol": jsonData[i].stock.stockSymbol,
-                            "quantity": String(jsonData[i].quantity),
-                            "purchasedRate": String(jsonData[i].purchasedRate),
-                            "totalAmount": String(jsonData[i].totalAmount)
+                            "orderTime": String(new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(jsonData[i].transactionTime)),
+                            "stockSymbol": jsonData[i]?.stock?.stockSymbol,
+                            "quantity": String(jsonData[i]?.quantity),
+                            "rate": String(jsonData[i]?.rate),
+                            "totalAmount": String(jsonData[i]?.totalAmount),
+                            "orderType": jsonData[i]?.transactionType === 0 ? "Buy" : "Sell",
+                            "orderId" : jsonData[i]?.orderId
                           }
             allData.push(counter)
         }
@@ -74,9 +76,30 @@ let count = transactions.length;
 const service = {
   fetchItems: (payload) => {
     let result = Array.from(transactions);
-    result = result.sort(getSorter(payload.sort));
+    result = result.reverse(getSorter(payload.sort));
     //console.log(result);
     return Promise.resolve(result);
+  },
+  delete: (data) => {
+    const order = transactions.find((t) => t.orderId === data.orderId);
+    
+    const deleteLimitOrder = async (order)=>{
+      try{
+          const res = await removeLimitOrder(
+            { params: { orderId: parseInt(order.orderId) } }
+          )
+
+          if(res.data > 0){
+              console.log("deleted successfully")
+              transactions = transactions.filter((t) => t.orderId !== order.orderId);
+              return Promise.resolve(order);
+          }
+      }
+      catch{
+
+      }
+    }
+    deleteLimitOrder(order);
   }  
 };
 
@@ -87,18 +110,31 @@ const styles = {
 const Example = () => (
   <div style={styles.container}>
     <CRUDTable
-      caption="Transaction History"
+      caption="Pending Orders"
       fetchItems={(payload) => service.fetchItems(payload)}
       
     >
       <Fields>
         {/* <Field name="id" label="Id" hideInCreateForm   /> */}
-        <Field name="transactionTime" label="Date" placeholder="date"  />
+        <Field name="orderTime" label="Order Time" placeholder="orderTime"  />
         <Field name="stockSymbol" label="Stock" placeholder="Stock"  />
         <Field name="quantity" label="Quantity" placeholder="quanytity"  />
-        <Field name="purchasedRate" label="Rate" placeholder="rate"  />
+        <Field name="rate" label="Rate" placeholder="rate"  />
         <Field name="totalAmount" label="Amount" placeholder="amount"  />
+        <Field name="orderType" label="Order Type" placeholder="orderType"  />
       </Fields>
+      <DeleteForm
+        title="Delete Process"
+        message="Are you sure you want to delete the order?"
+        trigger="Delete"
+        onSubmit={order => service.delete(order)}
+        submitText="Delete"
+        // validate={(values) => {
+        //   // const errors = {};
+          
+        //   // return errors;
+        // }}
+      />
       
     </CRUDTable>
   </div>

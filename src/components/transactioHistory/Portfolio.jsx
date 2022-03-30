@@ -7,33 +7,39 @@ import CRUDTable, {
 
 // Component's Base CSS
 import "../../crudTable.css";
-import { getStocksTransactions } from "../../services";
+import { getPortfolio, getStocksTransactions } from "../../services";
 
 function Portfolio(){
   
 const [transactions, setTransactions] = useState([]);
+const [totalPandL, setTotalPandL] = useState();
 
 //let transactions = []
 useEffect(() => {
   const fetchData = async () =>{
-      const res = await getStocksTransactions(
+      const res = await getPortfolio(
         // username: window.localStorage.getItem("username")
         { params: { username: window.localStorage.getItem("username") } }
       );
       var jsonData = res.data;
-
+      var totalProfit = 0;
+      
       var allData = []
         for (var i = 0; i < jsonData.length; i++) {
-            var counter = {
-                            "stockSymbol": jsonData[i].stock.stockSymbol,
-                            "quantity": String(jsonData[i].quantity),
-                            "avgRate": String(jsonData[i].purchasedRate),
-                            "InvestedAmount": String(jsonData[i].totalAmount),
-                            //"currentStatus": String(jsonData[i].totalAmount)
-                          }
-            allData.push(counter)
-        }
+           if(jsonData[i][1] > 0){
 
+            totalProfit = totalProfit + (jsonData[i][3]*jsonData[i][1]) - jsonData[i][2]
+            var counter = {
+              "stockSymbol": jsonData[i][0],
+              "quantity": String(jsonData[i][1]),
+              "investedAmount": String(jsonData[i][2]),
+              "currentValue": String(jsonData[i][3]*jsonData[i][1])
+            }
+            allData.push(counter)
+
+           }
+        }
+        setTotalPandL(totalProfit)
         setTransactions(allData)
       
   }
@@ -83,18 +89,17 @@ const styles = {
 
 const Example = () => (
   <div style={styles.container}>
+    <div> Total P&L: {totalPandL}</div>
     <CRUDTable
       caption="Transaction History"
       fetchItems={(payload) => service.fetchItems(payload)}
       
     >
       <Fields>
-        {/* <Field name="id" label="Id" hideInCreateForm   /> */}
-        <Field name="transactionTime" label="Date" placeholder="date"  />
         <Field name="stockSymbol" label="Stock" placeholder="Stock"  />
         <Field name="quantity" label="Quantity" placeholder="quanytity"  />
-        <Field name="purchasedRate" label="Rate" placeholder="rate"  />
-        <Field name="totalAmount" label="Amount" placeholder="amount"  />
+        <Field name="investedAmount" label="Invested Amount" placeholder="investedAmount"  />
+        <Field name="currentValue" label="Current Value" placeholder="currentValue"  />
       </Fields>
       
     </CRUDTable>

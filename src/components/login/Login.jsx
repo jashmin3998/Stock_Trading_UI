@@ -2,14 +2,16 @@ import React, { useState } from 'react';
 import { Component } from 'react';
 import { render } from 'react-dom';
 import { Route , withRouter, useNavigate} from 'react-router-dom';
-import { loginUser } from '../../services';
+import { getUserRole, loginUser } from '../../services';
+
 //import AuthenticationService from './AuthenticationService.js'
 
 function Login(){
 
-    const[username, setUsername] = useState("jass")
+    const[username, setUsername] = useState("JashminPatel")
     const[pwd, setPassword] = useState("jass123")
     const [error, setError] = useState("")
+    const[isAdmin, setIsAdmin] = useState(false)
     const navigate = useNavigate()
     
 
@@ -29,11 +31,24 @@ function Login(){
                 pwd
             })
 
+            const res = await getUserRole(
+                { params: { username: username } }
+            );    
+            if(res){
+                console.log(res.data)
+                if(res.data === "ADMIN"){
+                    window.localStorage.setItem("isAdmin", true)
+                }
+                
+                
+            }
+
             if(response.data.success){
                 console.log(response.data)
                 setError("Login Successfully")
                 window.localStorage.setItem("username", username)
                 navigate('/home')
+                
             }
             else{
                 console.log(response.data)
@@ -67,7 +82,7 @@ function Login(){
             </div>
             
             <button className="btn btn-success my-2" onClick={loginClicked}>Login</button>
-
+            {error&&<div className='text-danger'> {error} </div>}
         </div>
 
         

@@ -1,12 +1,20 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {Navbar, Nav, Container, NavDropdown} from 'react-bootstrap'
-import { Route , withRouter, useNavigate} from 'react-router-dom';
+import { Route , withRouter, useNavigate, useLocation} from 'react-router-dom';
+import { getUserRole } from "../../services";
 
 function Header(){
-    const isLoggedIn = window.localStorage.getItem("username") ? true : false;
+    const [isLoggedIn, setIsLoggedIn] = useState(window.localStorage.getItem("username") ? true : false);
+    
     console.log('🚀 ~ file: header.jsx ~ line 6 ~ Header ~ window.localStorage.getItem("username")', window.localStorage.getItem("username"))
     console.log("🚀 ~ file: header.jsx ~ line 6 ~ Header ~ isLoggedIn", isLoggedIn)
+    const location = useLocation();
+    
+    useEffect(()=>{
+        setIsLoggedIn(window.localStorage.getItem("username") ? true : false)
+        
 
+    },[location.pathname])
     return(
         
         <Navbar bg="light" expand="lg">
@@ -39,19 +47,19 @@ function LoggedOutHeader(){
 
 function LoggedInHeader(){
 
-    //const navigate = useNavigate();
 
     function clickedLogout(){
+        
         window.localStorage.clear();
         //navigate("/home");
     }
     return (
         <>
         <Nav className="me-auto">
-            <NavDropdown title="Manage" id="basic-nav-dropdown">
+            {window.localStorage.getItem("isAdmin") && <NavDropdown title="Manage" id="basic-nav-dropdown">
                     <NavDropdown.Item href="#/stock-trading/manage-stock">Add Stock</NavDropdown.Item>
                     <NavDropdown.Item href="#/stock-trading/manage-schedule">Manage Schedule</NavDropdown.Item>
-            </NavDropdown>
+            </NavDropdown>}
             <Nav.Link href="#/stock-trading/portfolio">Portfolio</Nav.Link>
             <Nav.Link href="#/stock-trading/pending-orders">Pending Orders</Nav.Link>
             <Nav.Link href="#/stock-trading/transaction-history">History</Nav.Link>

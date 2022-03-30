@@ -12,6 +12,7 @@ import TransactionHistory from "../transactioHistory/TransactionHistory";
 import CashInfo, {ManageCash} from "../profile/ManageCash";
 import PendingTransaction from "../transactioHistory/PendingTransaction";
 import Portfolio from "../transactioHistory/Portfolio";
+import Header from "../header/header";
 
 
 function StockApp(){
@@ -20,7 +21,9 @@ function StockApp(){
         return(
             <div className="StockApp">
                 <Router basename="/stock-trading">
+                    <Header/>
                     <Routes>
+                        {/* <Route path="/" element={<Login/>} /> */}
                         <Route path="/login" element={<Login />}/>
                         <Route path="/home" element={<Home />}/>
                         <Route path="/register" element={<Register />}/>

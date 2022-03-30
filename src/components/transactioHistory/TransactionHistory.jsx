@@ -7,6 +7,7 @@ import CRUDTable, {
   UpdateForm,
   DeleteForm
 } from "react-crud-table";
+import {BsPlusSquareFill} from 'react-icons/bs';
 
 // Component's Base CSS
 import "../../crudTable.css";
@@ -32,7 +33,7 @@ useEffect(() => {
                             "stockSymbol": jsonData[i].stock.stockSymbol,
                             "quantity": String(jsonData[i].quantity),
                             "purchasedRate": String(jsonData[i].purchasedRate),
-                            "totalAmount": String(jsonData[i].totalAmount)
+                            "totalAmount": (jsonData[i].transactionType === 1 ? "-" : "+") + String(jsonData[i].totalAmount)
                           }
             allData.push(counter)
         }
@@ -90,13 +91,15 @@ const Example = () => (
       caption="Transaction History"
       fetchItems={(payload) => service.fetchItems(payload)}  
     >
+      
       <Fields>
         {/* <Field name="id" label="Id" hideInCreateForm   /> */}
         <Field name="transactionTime" label="Date" placeholder="date"  />
         <Field name="stockSymbol" label="Stock" placeholder="Stock"  />
         <Field name="quantity" label="Quantity" placeholder="quanytity"  />
         <Field name="purchasedRate" label="Rate" placeholder="rate"  />
-        <Field name="totalAmount" label="Amount" placeholder="amount"  />
+        <Field name="totalAmount" label="Amount" placeholder="amount" />
+        
       </Fields>
       
     </CRUDTable>

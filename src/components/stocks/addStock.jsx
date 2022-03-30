@@ -1,9 +1,42 @@
-import React, { useState } from 'react';
-import { addStock } from '../../services';
+import React, { useEffect, useState } from 'react';
+import { addStock, getUserRole } from '../../services';
 
 //import AuthenticationService from './AuthenticationService.js'
 
 function AddStock(){
+
+    const[error, setError] = useState("")
+    const[isAdmin, setIsAdmin] = useState(false)
+
+    useEffect(()=>{
+        const fetchUserRole = async () =>{
+            try{
+                const res = await getUserRole(
+                    { params: { username: window.localStorage.getItem("username") } }
+                );    
+                if(res){
+                    setIsAdmin(res.data === "ADMIN" ? true: false);
+                }
+            }
+            catch{
+                console.log("Not an admin")
+            }           
+        }
+
+        fetchUserRole();
+
+    },[])
+
+    return(
+        <>
+        {isAdmin && <AddStocks />}
+        
+        {isAdmin && <h3>Admin access only</h3>}
+        </>
+    )
+}
+
+function AddStocks(){
 
     const[stockName, setStockName] = useState("Tesla")
     const[sSymbol, setSSymbol] = useState("TSL")
@@ -12,7 +45,7 @@ function AddStock(){
     const[intialPrice, setIntialPrice] = useState(852)
     const[creationDate, setCreationDate] = useState()
     const[error, setError] = useState("")
-    
+    const[isAdmin, setIsAdmin] = useState(false)
 
     const handleStockNameChange=(event) =>{
         setStockName(event.target.value) 
@@ -35,6 +68,8 @@ function AddStock(){
     // const handleCreationDateChange=(event) =>{
     //     setCreationDate(event.target.value) 
     // }
+
+    
 
     
 
@@ -77,6 +112,7 @@ function AddStock(){
 
 
     return(
+        <>
         <div className='Login d-flex flex-column align-items-center'>
             <h3> Add New Stock </h3>
             <div className='row col-2 mt-2'>
@@ -113,6 +149,7 @@ function AddStock(){
             <button className="btn btn-success" onClick={addClicked}>Add</button>
             
         </div>
+        </>
     )
     
     

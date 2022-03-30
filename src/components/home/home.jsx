@@ -3,6 +3,7 @@ import { Route , withRouter, useNavigate} from 'react-router-dom';
 import '../../App.css'
 import { getStocks } from '../../services';
 import StockDtl from './StockDtl';
+import {BsCaretUpFill,BsCaretDownFill} from 'react-icons/bs';
 
 function Home(){
 
@@ -28,6 +29,7 @@ function Home(){
             const res = await getStocks();
             setStocks(res.data);
             setSelectedStock(res.data[0])
+            console.log(res.data)
         }
         fetchData();
       }, []);
@@ -42,12 +44,14 @@ function Home(){
     return(
         <div className='container'>        
             <div className='row'>
-                <div className='col-3'>
-                <input className='col-md-auto' type='text' placeholder='Search' onChange={handleSerachTermChange}></input>
+                <div className='col-3 bg-light'>
+                    <div className=' d-flex justify-content-center mt-3'>
+                         <input type='text' placeholder='Search' onChange={handleSerachTermChange}></input>
+                    </div>
                 {/* <Table data={search(stocks)}/> */}
                 <table className="table table-hover text-align-start" >
                 
-                    <tbody>
+                    <tbody style={{overflow: "auto" , height: "79vh",  display: "block"}}>
                         <tr>
                             {/* <th>Stocks Name</th> */}
                             <th>Symbol</th>
@@ -58,15 +62,18 @@ function Home(){
                         <tr key={item.stocksId} onClick= {()=> {
                             stockClicked(item)
                             }}>
-                                
-                        {/* <td scope="row">{item.name}</td> */}
+                        
                         <td scope="row">{item.stockSymbol}</td>
-                        <td scope="row">{item.price}$</td>
-                        {/* <td scope="row">{item.price}*{item.total_quantity}</td> */}
+                        <td scope="row" style={ item?.stockPrice?.price > item?.stockPrice?.preClose ? {color:"green"} : {color:"red"}}>${item?.stockPrice?.price} 
+                        {  item?.stockPrice?.price > item?.stockPrice?.preClose ? <BsCaretUpFill/>: <BsCaretDownFill/>} 
+                        </td>
+                        
                         </tr>
                     ))}
+                
                     </tbody>
                 </table>
+                
                 </div>
                 <div className='col-9'>
                 {selectedStock && <StockDtl

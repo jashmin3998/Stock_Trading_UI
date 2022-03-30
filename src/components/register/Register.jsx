@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Component } from 'react';
 import { render } from 'react-dom';
-import { Route , withRouter} from 'react-router-dom';
+import { useNavigate} from 'react-router-dom';
 import { registerUser } from '../../services';
 //import AuthenticationService from './AuthenticationService.js'
 
@@ -13,7 +13,8 @@ function Register(){
     const[email, setEmail] = useState("jass@gmail.com")
     const [pwd, setPwd] = useState("jass123")
     const [error, setError] = useState("")
-    
+    const [isRegistered, setIsRegistered] =useState(false)
+    const navigate = useNavigate()
 
     const handleUsernameChange=(event) =>{
         setUsername(event.target.value) 
@@ -43,11 +44,16 @@ function Register(){
                 lastname,
                 email,
                 username,
-                pwd
+                pwd,
+                userRole : "USER"
             })
 
             if(response.data.success){
-                setError("Registered Successfully")
+                setIsRegistered(true)
+                navigate("/login")
+            }
+            else{
+                setError("Registeration Failed")
             }
         } catch (error) {
             console.log(error)
@@ -55,6 +61,10 @@ function Register(){
                 setError(error.response.data.error)
             }
         }
+
+    }
+
+    function clickedPopup(){
 
     }
 
@@ -84,7 +94,12 @@ function Register(){
             <div className='row col-2 mt-4'>
                 <button className="btn btn-success" onClick={registerClicked}>Register</button>
             </div>
-            
+            {error && <div>{error}</div>}
+            {isRegistered && 
+            <div class="popup" onclick={clickedPopup}>
+                <span class="popuptext" id="myPopup">Registered Successfully</span>
+            </div>
+            }
         </div>
     )
         

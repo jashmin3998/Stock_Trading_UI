@@ -8,19 +8,32 @@ import CRUDTable, {
   UpdateForm,
   DeleteForm
 } from "react-crud-table";
-import { addCashFund, getStatement } from "../../services";
+import { addCashFund, getStatement, getCashBalance } from "../../services";
 
 export function ManageCash(){
 
   const [transactions, setTransactions] = useState([]);
+  const [cashBalance, setCashBalance] = useState(0);
+  const [investedAmount, setInvestedAmount] = useState(0);
 
   //let transactions = []
   useEffect(() => {
     const fetchData = async () =>{
-        const res = await getStatement(
-          // username: window.localStorage.getItem("username")
+      var res
+      var balance
+      
+      try{
+        balance = await getCashBalance(
           { params: { username: window.localStorage.getItem("username") } }
         );
+        setCashBalance(balance.data)
+        res = await getStatement(
+          { params: { username: window.localStorage.getItem("username") } }
+        );
+        }
+      catch(error){
+        console.log(error.response.data.error)
+      }
         var jsonData = res.data;
   
         var allData = []
@@ -33,14 +46,16 @@ export function ManageCash(){
               var counter = {
                               "transactionId" : String(jsonData[i].ctId),
                               "transactionTime": String(new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(jsonData[i].transactionTime)),
-                              "amount": String(jsonData[i].amount),
+                              "amount": (jsonData[i].transactionType === 1 ? "-" : "+") + String(jsonData[i].amount),
                               "type": transactionType,
                               "buyingPower": String(jsonData[i].user.cashBalance),
                               "investedAmount" : String(jsonData[i].user.usedCash)
                             }
               allData.push(counter)
           }
-  
+          // setCashBalance(res.data[0].user.cashBalance)
+          // setBuyingPower(res.data[0].user?.cashBalance - res.data[0]?.user?.usedCash)
+          
           setTransactions(allData)
         
     }
@@ -78,7 +93,7 @@ export function ManageCash(){
   const service = {
     fetchItems: (payload) => {
       let result = Array.from(transactions);
-      result = result.sort(getSorter(payload.sort));
+      result = result.reverse(getSorter(payload.sort));
       //console.log(result);
       return Promise.resolve(result);
     }  
@@ -91,13 +106,13 @@ export function ManageCash(){
   const Example = () => (
     <div style={styles.container}>
       <CRUDTable
-        caption="Cash Balance Statement"
+        caption="Statement"
         fetchItems={(payload) => service.fetchItems(payload)}
         
       >
         <Fields>
           {/* <Field name="id" label="Id" hideInCreateForm   /> */}
-          <Field name="transactionId" label="Transaction Id" placeholder="transactionId"  />
+          <Field name="transactionId" label="Transaction Id" placeholder="transactionId" />
           <Field name="transactionTime" label="Date" placeholder="date"  />
           <Field name="amount" label="Amount" placeholder="amount"  />
           <Field name="type" label="Transaction Type" placeholder="type"  />
@@ -108,13 +123,19 @@ export function ManageCash(){
   );
   Example.propTypes = {};
   return(
-    <Example/>
+    <div>
+      <div className="d-flex justify-content-center">
+          <h4> Cash Balance: ${cashBalance} </h4>
+      </div>
+      <Example/>
+    </div>
   )
 }
 
 const CashInfo = () => {
 
   const [show, setShow] = useState(false);
+  const [isDeposit, setIsDeposite] = useState()
 
     function MakePayment(){
         setShow(true);
@@ -124,16 +145,21 @@ const CashInfo = () => {
 
   return (
     <>
-      <div className="row justify-content-center my-2">
-        Balance: $2000
-      </div>
-      <div className="row justify-content-center my-2">
-        <button className="col-1 btn btn-success mr-2" onClick={MakePayment}>Add Funds</button>
-        <button className="col-1 btn btn-danger ml-2">Withdraw</button>
+      
+      <div className="row justify-content-center my-4">
+        <button className="col-1 btn btn-success mr-2 " onClick={()=>{
+          setIsDeposite(0)
+          setShow(true)
+        }}>Add Funds</button>
+        <button className="col-1 btn btn-danger ml-2" onClick={()=>{
+          setIsDeposite(1)
+          setShow(true)
+        }}>Withdraw</button>
       </div>
       {show && <CashTransaction
                 show={show}
                 setShow={setShow}
+                isDeposit = {isDeposit}
             />}
       <ManageCash />
     </>
@@ -143,117 +169,70 @@ const CashInfo = () => {
 
 function CashTransaction({
   show,
-  setShow
+  setShow,
+  isDeposit
 })
 {
   
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
-
-
-  
-
+  const [error, setError] = useState("")
   const [amount, setAmount] = useState();
+
+  async function handleCashTransaction(){
+
+    try{ 
+        var reqBody = {
+          "amount" : amount,
+          "transactionType" : isDeposit,
+          "user":{
+            "username" : window.localStorage.getItem("username")
+          }  
+        }
+  
+        const res = await addCashFund(reqBody)
+        if(res.data.success){
+          setShow(false)
+          window.location.reload();
+        }
+        else{
+          setError("Transaction Failed : Unsufficient Balance");
+        }
+    }
+    catch (error) {
+      console.log(error)
+      if(error?.response?.data?.error){
+          console.log(error.response.data.error)
+      }
+    }
+  }
+
     return(
         <Modal show={show} onHide={handleClose}>
             <Modal.Header closeButton>
-                <Modal.Title>Buy Sell</Modal.Title>
+                <Modal.Title>{isDeposit === 0? "Deposite" : "Cash Out"}</Modal.Title>
             </Modal.Header>
             <Modal.Body>
             <div className='Login d-flex flex-column align-items-center'>
                 <div className='row'>
-                    Amount:  <input type="number" name="username" value={amount} onChange = {() =>{setAmount(amount);}} />
+                    Amount:  <input type="number" name="amount" value={amount} onChange = {(e) =>{setAmount(e.target.value)}} />
                 </div>
             </div>
-                
+            
+            {error&&<div className='text-danger d-flex justify-content-center'> {error} </div>}
             </Modal.Body>
             
             <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
                 Cancle
             </Button>
-            <Button variant="primary" onClick={handleAddCashTransaction(amount)}>
-                Add Funds
+            <Button variant="primary" onClick={handleCashTransaction}>
+                {isDeposit === 0? "Add Funds" : "Withdraw Funds"}
             </Button>
             </Modal.Footer>
       </Modal>
     )
 }
 
-async function handleAddCashTransaction(amount){
 
-  try{ 
-      var user = {
-        "username" : window.localStorage.getItem("username")
-      }
-      var transaction_type = 0;
-
-      const res = await addCashFund(
-        amount,
-        transaction_type,
-        user
-      )
-  }
-  catch (error) {
-    console.log(error)
-    if(error?.response?.data?.error){
-        console.log(error.response.data.error)
-    }
-  }
-}
 export default CashInfo;
-
-
-
-// const MakePayment =() => {
-
-//   const [amount, setAmount] = useState();
-
-//   async function addFund(event){
-
-//     try{
-      
-//         setAmount(event.target.value);
-//         var user = {
-//           "username" : window.localStorage.getItem("username")
-//         }
-//         var transaction_type = 0;
-
-//         const res = await addCashFund(
-//           amount,
-//           transaction_type,
-//           user
-//         )
-//     }
-//     catch (error) {
-//       console.log(error)
-//       if(error?.response?.data?.error){
-//           console.log(error.response.data.error)
-//       }
-//   }
-//     // if(res.data.success){
-//     //   return (
-//     //     <div class="modal">
-//     //         <div class="modal_content">
-//     //             <span class="close">&times;</span>
-//     //             <p>I'm A Pop Up!!!</p>
-//     //         </div>
-//     //     </div>
-//     //   )
-//     // }
-//   }
-
-//   return(
-//     <div className='Login d-flex flex-column align-items-center'>
-    
-//     <div className='row col-2 mt-2'>
-//         Enter Amount: 
-//     </div>
-
-//     <button className="btn btn-success my-2" onClick={addFund} value={addFund}>Make Payment</button>
-
-// </div>
-//   )
-
-
-// }
