@@ -1,70 +1,54 @@
-# Getting Started with Create React App
+# Getting Started with Stock Trading System
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Project Definition:
 
-## Available Scripts
+The task is to create a stock trading platform where users can buy and sell stocks. The system should support two types of users. One is the customer of the stock trading platform the other is an administrator of the system. In this project the administrator will be responsible for creating the stocks and setting the initial price. 
 
-In the project directory, you can run:
+# User Requirements:
 
-### `npm start`
+-	Create a user account with full name, username, and email.
+-	Can buy and sell stocks at market price.
+-	Can buy and sell stocks using limit order. 
+    o	The user will set a desired price to buy or sell the stock and a date when to expire the limit order if it is not fulfilled. The user should also have the option     to cancel this order before it gets executed.
+-	View their current portfolio of stocks and cash.
+-	View their history of transactions. 
+-	Ability to deposit and withdraw cash.
+    o	The user when depositing cash will have the funds go into a cash account.
+    o	The user should only be able to withdraw money from their cash account.
+    o	When stocks are sold the funds will go to cash account.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+# Administrators Requirements:
+-	Create new stocks.
+    o	Include Company name, stock ticker, volume, and initial price. 
+    o	Volume will be total amount of shares purchased.
+-	Change market hours. 
+    o	Users should only be able to execute trades during market hours.
+-	Change market schedule
+    o	Market should only be open during weekdays and closed on holidays. 
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+# User interface Requirements:
+-	Display available stocks that can be traded.
+    o	Show stock ticker, price, volume, and market capitalization (volume X price)
+    o	Show opening price for the stock
+    o	Show high and low during the day
+-	Perform the user and administrator functions as listed in the requirements from the UI.
 
-### `npm test`
+# Random Stock Price Generator:
+-	Allow the stock prices to fluctuate during the day with a custom random price generator. The price should gradually go up or down throughout the day.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
 
-### `npm run build`
+# Frontend Installation:
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+1.	Clone the UI system into a directory on your system using the below Github link.
+2.	via SSH: > git clone git@github.com:jashmin3998/Stock_Trading_UI.git 
+3.	via HTTPS: > git clone https://github.com/jashmin3998/Stock_Trading_UI.git
+4.	change BaseApiURL in axios.js to communicate with backend.
+5.	Install npm and Internet Information System(IIS) into your system.
+6.	Run 'npm run build' command. It creates the build directory in the project folder.
+7.	Open the IIS dashboard and upload the build folder there.
+8.	Ready to hit the system URL by appending /stock-trading/.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+# Architecture:
+![image](https://user-images.githubusercontent.com/90228721/161123236-97580645-5cf0-4aef-86da-c9d4d313b8ad.png)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
-
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
-
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
-
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
-
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
