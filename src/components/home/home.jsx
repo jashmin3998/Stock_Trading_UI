@@ -4,6 +4,7 @@ import '../../App.css'
 import { getStocks } from '../../services';
 import StockDtl from './StockDtl';
 import {BsCaretUpFill,BsCaretDownFill} from 'react-icons/bs';
+import { roundToTwoDigits } from '../../util';
 
 function Home(){
 
@@ -23,14 +24,17 @@ function Home(){
         );
     }
     
+    const fetchData = async () =>{
+        const res = await getStocks();
+        setStocks(res.data);
+        setSelectedStock(res.data[0])
+        console.log(res.data)
+    }
+
     useEffect(() => {
-        
-        const fetchData = async () =>{
-            const res = await getStocks();
-            setStocks(res.data);
-            setSelectedStock(res.data[0])
-            console.log(res.data)
-        }
+        setInterval(()=>{
+            fetchData();
+        }, [30000])
         fetchData();
       }, []);
 
@@ -64,7 +68,7 @@ function Home(){
                             }}>
                         
                         <td scope="row">{item.stockSymbol}</td>
-                        <td scope="row" style={ item?.stockPrice?.price > item?.stockPrice?.preClose ? {color:"green"} : {color:"red"}}>${item?.stockPrice?.price} 
+                        <td scope="row" style={ item?.stockPrice?.price > item?.stockPrice?.preClose ? {color:"green"} : {color:"red"}}>${roundToTwoDigits(item?.stockPrice?.price)} 
                         {  item?.stockPrice?.price > item?.stockPrice?.preClose ? <BsCaretUpFill/>: <BsCaretDownFill/>} 
                         </td>
                         

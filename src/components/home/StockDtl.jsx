@@ -4,6 +4,7 @@ import { placeLimitOrder, placeMarketOrder } from "../../services";
 import {roundToTwoDigits} from '../../util';
 import {BsCaretUpFill,BsCaretDownFill} from 'react-icons/bs';
 
+
 function StockDtl({selectedStock}){
 
     const [data, setData] = useState([])
@@ -12,10 +13,10 @@ function StockDtl({selectedStock}){
         <div>
             <div className="page-header">
             <div className="page-header">
-                <div className="row">
+                <div className="row" style={{fontSize : '2rem'}}>
                     <div className="col-2">{selectedStock?.name}</div>
-                        <div className="col-10">
-                        <div style={selectedStock?.stockPrice?.price > selectedStock?.stockPrice?.preClose? {color:"green", textAlign: "end"} : {color:"red", textAlign: "end"}}>${selectedStock?.stockPrice?.price}
+                        <div className="col-10" >
+                        <div style={selectedStock?.stockPrice?.price > selectedStock?.stockPrice?.preClose? {color:"green", textAlign: "end"} : {color:"red", textAlign: "end"}}>${roundToTwoDigits(selectedStock?.stockPrice?.price)}
                         { selectedStock?.stockPrice?.price > selectedStock?.stockPrice?.preClose? <BsCaretUpFill/>: <BsCaretDownFill/>} 
                         </div>
                     </div>
@@ -80,7 +81,7 @@ function FooterOption(selectedStock){
         <div className="row  my-5" style={{justifyContent: "space-evenly"}}>
 
             <button className="col-2 btn btn-success mr-2" onClick={clickedBuyOption}>Buy</button>
-            <button className="col-2 btn btn-danger ml-2" onClick={clickedSellOption}>Sell</button>
+            <button className="col-2 btn btn-primary ml-2" onClick={clickedSellOption}>Sell</button>
             {show && <TrasactionForm
                 show={show}
                 setShow={setShow}
@@ -100,18 +101,23 @@ function TrasactionForm({
 {
 
 
-  const[price, setPrice] = useState(selectedStock?.props?.stockPrice?.price); 
+  const[price, setPrice] = useState(roundToTwoDigits(selectedStock?.props?.stockPrice?.price)); 
   const[quantity, setQuantity] =useState(0);
   const[isLimit, setIsLimit] = useState(false) 
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
   const [error, setError] = useState("")
+  const [msg, setMsg] = useState("")
 
 
   async function handlePlaceOrder(){
 
+    if(quantity < 1){
+        setError("! Incorrect Quantity")
+        return;
+    }
     var marketOrder = {
-        "quantity" : quantity,
+        "quantity" : parseInt(quantity),
         "transactionType" : isBuy,
         "rate" : price,
         "user":{
@@ -132,7 +138,13 @@ function TrasactionForm({
         }
         
         if(res.data.success){
-            setShow(false)
+            setError("")
+            setMsg("Order Successfully")
+
+        }
+        else{
+            setMsg("")
+            setError(res?.data?.error)
         }
     }
     catch{
@@ -176,7 +188,8 @@ function TrasactionForm({
                         }}/>
                 </div>
             </div>
-            {error&&<div className='text-danger'> {error} </div>}
+            {msg&&<div className='text-success my-3' style={{textAlign : "center"}}> {msg} </div>}
+            {error&&<div className='text-danger my-3'  style={{textAlign : "center"}}> {error} </div>}
             <Modal.Footer>
             <Button variant="secondary" onClick={handleClose}>
                 Cancel

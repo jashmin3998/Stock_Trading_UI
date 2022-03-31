@@ -4,6 +4,7 @@ import CRUDTable, {
   Fields,
   Field,
 } from "react-crud-table";
+import { roundToTwoDigits } from '../../util';
 
 // Component's Base CSS
 import "../../crudTable.css";
@@ -32,8 +33,8 @@ useEffect(() => {
             var counter = {
               "stockSymbol": jsonData[i][0],
               "quantity": String(jsonData[i][1]),
-              "investedAmount": String(jsonData[i][2]),
-              "currentValue": String(jsonData[i][3]*jsonData[i][1])
+              "investedAmount":'$' + String(roundToTwoDigits(jsonData[i][2])),
+              "currentValue": '$' + String(roundToTwoDigits(jsonData[i][3]*jsonData[i][1]))
             }
             allData.push(counter)
 
@@ -89,9 +90,9 @@ const styles = {
 
 const Example = () => (
   <div style={styles.container}>
-    <div> Total P&L: {totalPandL}</div>
+    <div style={{fontSize : '1.5rem'}}> Total P&L: ${roundToTwoDigits(totalPandL)}</div>
     <CRUDTable
-      caption="Transaction History"
+      caption="Portfolio"
       fetchItems={(payload) => service.fetchItems(payload)}
       
     >
@@ -111,6 +112,5 @@ return(
 )
 
 }
-
 
 export default Portfolio;

@@ -44,14 +44,12 @@ function Login(){
             }
 
             if(response.data.success){
-                console.log(response.data)
                 setError("Login Successfully")
                 window.localStorage.setItem("username", username)
                 navigate('/home')
                 
             }
             else{
-                console.log(response.data)
                 setError("Login Failed")
             }
         } catch (error) {

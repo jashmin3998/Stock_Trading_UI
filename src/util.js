@@ -13,5 +13,5 @@ export function timeToseconds(timeString){
     if(arr1[1] === 'PM'){
         seconds = seconds+ 43200
     }
-    return seconds;
+    return seconds*1000;
 }

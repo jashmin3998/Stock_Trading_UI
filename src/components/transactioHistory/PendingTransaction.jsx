@@ -11,6 +11,7 @@ import CRUDTable, {
 // Component's Base CSS
 import "../../crudTable.css";
 import { getPendingOrders, removeLimitOrder } from "../../services";
+import { roundToTwoDigits } from '../../util';
 
 function PendingTransaction(){
   
@@ -31,8 +32,8 @@ useEffect(() => {
                             "orderTime": String(new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(jsonData[i].transactionTime)),
                             "stockSymbol": jsonData[i]?.stock?.stockSymbol,
                             "quantity": String(jsonData[i]?.quantity),
-                            "rate": String(jsonData[i]?.rate),
-                            "totalAmount": String(jsonData[i]?.totalAmount),
+                            "rate": '$'+String(roundToTwoDigits(jsonData[i]?.rate)),
+                            "totalAmount": String(roundToTwoDigits(jsonData[i]?.totalAmount)),
                             "orderType": jsonData[i]?.transactionType === 0 ? "Buy" : "Sell",
                             "orderId" : jsonData[i]?.orderId
                           }
@@ -87,19 +88,16 @@ const service = {
       try{
           const res = await removeLimitOrder(
             { params: { orderId: parseInt(order.orderId) } }
-          )
-
-          if(res.data > 0){
-              console.log("deleted successfully")
-              transactions = transactions.filter((t) => t.orderId !== order.orderId);
-              return Promise.resolve(order);
-          }
+          )      
       }
       catch{
 
       }
     }
     deleteLimitOrder(order);
+    window.location.reload()
+    //transactions = transactions.filter((t) => t.orderId !== order.orderId);
+    
   }  
 };
 
@@ -120,7 +118,7 @@ const Example = () => (
         <Field name="stockSymbol" label="Stock" placeholder="Stock"  />
         <Field name="quantity" label="Quantity" placeholder="quanytity"  />
         <Field name="rate" label="Rate" placeholder="rate"  />
-        <Field name="totalAmount" label="Amount" placeholder="amount"  />
+        {/* <Field name="totalAmount" label="Amount" placeholder="amount"  /> */}
         <Field name="orderType" label="Order Type" placeholder="orderType"  />
       </Fields>
       <DeleteForm

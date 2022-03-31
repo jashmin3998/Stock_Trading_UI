@@ -8,6 +8,7 @@ import CRUDTable, {
   DeleteForm
 } from "react-crud-table";
 import {BsPlusSquareFill} from 'react-icons/bs';
+import { roundToTwoDigits } from '../../util';
 
 // Component's Base CSS
 import "../../crudTable.css";
@@ -32,8 +33,8 @@ useEffect(() => {
                             "transactionTime": String(new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(jsonData[i].transactionTime)),
                             "stockSymbol": jsonData[i].stock.stockSymbol,
                             "quantity": String(jsonData[i].quantity),
-                            "purchasedRate": String(jsonData[i].purchasedRate),
-                            "totalAmount": (jsonData[i].transactionType === 1 ? "-" : "+") + String(jsonData[i].totalAmount)
+                            "purchasedRate": '$' + String(roundToTwoDigits(jsonData[i].purchasedRate)),
+                            "totalAmount":  (jsonData[i].transactionType === 1 ? "+" : "-") + '$' + String(roundToTwoDigits(jsonData[i].totalAmount))
                           }
             allData.push(counter)
         }

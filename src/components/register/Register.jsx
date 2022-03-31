@@ -7,38 +7,76 @@ import { registerUser } from '../../services';
 
 function Register(){
 
-    const [firstname, setFirstname] = useState("Jashmin")
-    const[lastname, setLastname] = useState("Patel")
-    const [username, setUsername] = useState("jass3998")
-    const[email, setEmail] = useState("jass@gmail.com")
-    const [pwd, setPwd] = useState("jass123")
+    const [firstname, setFirstname] = useState("")
+    const[lastname, setLastname] = useState("")
+    const [username, setUsername] = useState("")
+    const[email, setEmail] = useState("")
+    const [pwd, setPwd] = useState("")
     const [error, setError] = useState("")
     const [isRegistered, setIsRegistered] =useState(false)
     const navigate = useNavigate()
 
     const handleUsernameChange=(event) =>{
-        setUsername(event.target.value) 
+
+        if(event.target.value === ""){
+            setError("!Username cannot be empty")
+        }
+        else{
+            setUsername(event.target.value)
+        }
+        
     }
 
     const handlePasswordChange=(event) =>{
-        setPwd(event.target.value) 
+         
+        if(event.target.value === ""){
+            setError("!Password cannot be empty")
+        }
+        else{
+            setPwd(event.target.value)
+        }
     }
 
     const handleFirstnameChange=(event) =>{
-        setFirstname(event.target.value) 
+        if(event.target.value === ""){
+            setError("!First Name cannot be empty")
+        }
+        else{
+            setFirstname(event.target.value)
+        }
+         
     }
 
     const handleLastnameChange=(event) =>{
-        setLastname(event.target.value) 
+        if(event.target.value === ""){
+            setError("!Last Name cannot be empty")
+        }
+        else{
+            setLastname(event.target.value)
+        }
+        
+        
     }
 
     const handleEmailChange=(event) =>{
-        setEmail(event.target.value) 
+        
+        if(event.target.value === ""){
+            setError("!Email cannot be empty")
+        }
+        else{
+            setEmail(event.target.value) 
+        }
     }
 
     async function registerClicked(){
 
         try {
+
+            if(firstname === ""|| lastname  === "" || email  === "" || username  === "" || pwd  === ""){
+                setError("! All the details are medatory.")
+                return;
+            }
+            
             const response = await registerUser({
                 firstname,
                 lastname,
@@ -55,6 +93,7 @@ function Register(){
             else{
                 setError("Registeration Failed")
             }
+        
         } catch (error) {
             console.log(error)
             if(error?.response?.data?.error){
@@ -94,7 +133,7 @@ function Register(){
             <div className='row col-2 mt-4'>
                 <button className="btn btn-success" onClick={registerClicked}>Register</button>
             </div>
-            {error && <div>{error}</div>}
+            {error && <div className='text-danger my-3'>{error}</div>}
             {isRegistered && 
             <div class="popup" onclick={clickedPopup}>
                 <span class="popuptext" id="myPopup">Registered Successfully</span>

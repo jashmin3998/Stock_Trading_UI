@@ -7,6 +7,8 @@ import CRUDTable, {
   UpdateForm,
   DeleteForm
 } from "react-crud-table";
+import moment from 'moment';
+import 'moment-timezone';
 
 // Component's Base CSS
 import "../../crudTable.css";
@@ -43,7 +45,7 @@ function ScheduleMarket(){
       <>
       {isAdmin && <ManageScheduleMarket />}
       
-      {isAdmin && <h3>Admin access only</h3>}
+      {!isAdmin && <h3>Admin access only</h3>}
       </>
   )
 }
@@ -67,10 +69,13 @@ useEffect(() => {
               status = "close"
             }
             var counter = {
+                            "id" : jsonData[i].id,
                             "dates": jsonData[i].dates,
                             "startTime": String(new Intl.DateTimeFormat('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(jsonData[i].startTime)),
                             "endTime": String(new Intl.DateTimeFormat('en-US', {hour: '2-digit', minute: '2-digit', second: '2-digit'}).format(jsonData[i].endTime)),
-                            "status": status
+                            "status": status,
+                            "startCount": jsonData[i].startTime,
+                            "endCount": jsonData[i].endTime
                           }
             allData.push(counter)
         }
@@ -111,7 +116,7 @@ let count = schedules.length;
 const service = {
   fetchItems: (payload) => {
     let result = Array.from(schedules);
-    //result = result.sort(getSorter(payload.sort));
+    result = result.sort(getSorter(payload.sort));
     return Promise.resolve(result);
   },
   // create: (location) => {
@@ -128,18 +133,19 @@ const service = {
     const updateSchedule = async (schedule)=>{
 
       
-      var start = (new Date(schedule.dates)).getTime() + timeToseconds(schedule.startTime);
-      var end = (new Date(schedule.dates)).getTime() + timeToseconds(schedule.endTime);
-      console.log((new Date(schedule.dates)).getTime())
-      var holiday = schedule.status === "open" ? 0 : 1;
-      let intlDateObj = new Intl.DateTimeFormat('en-US', {
-        timeZone: "America/Phoenix"
-      });
-      console.log(intlDateObj)
-
-      console.log(intlDateObj.format(new Date(schedule.dates)))
+      var start = (schedule.startCount) - (schedule.startCount % 86400000) + timeToseconds(data.startTime) + 25200000;
+      // console.log(schedule.startCount)
+      // console.log((schedule.startCount % 86400000));
+      // console.log(timeToseconds(schedule.startTime))
+      // console.log(start);
+      var end = (schedule.endCount) - (schedule.endCount % 86400000) + timeToseconds(data.endTime) + 25200000;
+      var holiday = data.status === 'open' ? 0 : 1;
+      // console.log(start)
+      // console.log(end);
+     // moment.unix(value).format("MM/DD/YYYY")
+      
       var schedule ={
-        "todayDate" : schedule.dates,
+        "dates" : data.dates,
         "startTime" : start,
         "endTime" : end,
         "isHoliday": holiday
@@ -161,7 +167,7 @@ const service = {
       }
     }
     updateSchedule(schedule)
-    return Promise.resolve(schedule);
+    window.location.reload()
   },
   // delete: (data) => {
   //   const location = locations.find((t) => t.id === data.id);

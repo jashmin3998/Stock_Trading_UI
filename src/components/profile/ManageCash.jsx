@@ -9,6 +9,7 @@ import CRUDTable, {
   DeleteForm
 } from "react-crud-table";
 import { addCashFund, getStatement, getCashBalance } from "../../services";
+import { roundToTwoDigits } from '../../util';
 
 export function ManageCash(){
 
@@ -46,10 +47,10 @@ export function ManageCash(){
               var counter = {
                               "transactionId" : String(jsonData[i].ctId),
                               "transactionTime": String(new Intl.DateTimeFormat('en-US', { year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' }).format(jsonData[i].transactionTime)),
-                              "amount": (jsonData[i].transactionType === 1 ? "-" : "+") + String(jsonData[i].amount),
+                              "amount": (jsonData[i].transactionType === 1 ? "-" : "+") + String(roundToTwoDigits(jsonData[i].amount)),
                               "type": transactionType,
-                              "buyingPower": String(jsonData[i].user.cashBalance),
-                              "investedAmount" : String(jsonData[i].user.usedCash)
+                              "buyingPower": String(roundToTwoDigits(jsonData[i].user.cashBalance)),
+                              "investedAmount" : String(roundToTwoDigits(jsonData[i].user.usedCash))
                             }
               allData.push(counter)
           }
@@ -125,7 +126,7 @@ export function ManageCash(){
   return(
     <div>
       <div className="d-flex justify-content-center">
-          <h4> Cash Balance: ${cashBalance} </h4>
+          <h4> Cash Balance: ${roundToTwoDigits(cashBalance)} </h4>
       </div>
       <Example/>
     </div>
@@ -146,12 +147,12 @@ const CashInfo = () => {
   return (
     <>
       
-      <div className="row justify-content-center my-4">
+      <div className="row my-4" style={{justifyContent: "space-evenly"}} >
         <button className="col-1 btn btn-success mr-2 " onClick={()=>{
           setIsDeposite(0)
           setShow(true)
         }}>Add Funds</button>
-        <button className="col-1 btn btn-danger ml-2" onClick={()=>{
+        <button className="col-1 btn btn-primary ml-2" onClick={()=>{
           setIsDeposite(1)
           setShow(true)
         }}>Withdraw</button>

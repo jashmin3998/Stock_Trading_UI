@@ -31,18 +31,18 @@ function AddStock(){
         <>
         {isAdmin && <AddStocks />}
         
-        {isAdmin && <h3>Admin access only</h3>}
+        {!isAdmin && <h3>Admin access only</h3>}
         </>
     )
 }
 
 function AddStocks(){
 
-    const[stockName, setStockName] = useState("Tesla")
-    const[sSymbol, setSSymbol] = useState("TSL")
-    const[totalQty, setTotalQty] = useState(100000)
-    const[purchasedQty, setPurchasedQty] = useState(20000)
-    const[intialPrice, setIntialPrice] = useState(852)
+    const[stockName, setStockName] = useState("")
+    const[sSymbol, setSSymbol] = useState("")
+    const[totalQty, setTotalQty] = useState()
+    const[purchasedQty, setPurchasedQty] = useState()
+    const[intialPrice, setIntialPrice] = useState()
     const[creationDate, setCreationDate] = useState()
     const[error, setError] = useState("")
     const[isAdmin, setIsAdmin] = useState(false)
@@ -82,6 +82,11 @@ function AddStocks(){
             var stockSymbol = sSymbol
             var name = stockName
             var creationTime = creationDate
+
+            if(name  === "" || stockSymbol  === "" || totalQuantity   === 0 || price === 0 ){
+                setError("! All the details are medatory.")
+                return;
+            }
             const response = await addStock({
                 name,
                 stockSymbol,
@@ -97,7 +102,7 @@ function AddStocks(){
             }
             else{
                 console.log(response.data)
-                setError("Failed to add stock")
+                setError("!Opps Failed to add stock. Try again")
             }
         } catch (error) {
             console.log(error)
@@ -147,7 +152,7 @@ function AddStocks(){
             </div>
             
             <button className="btn btn-success" onClick={addClicked}>Add</button>
-            
+            {error && <div className='text-danger my-3'>{error}</div>}
         </div>
         </>
     )
