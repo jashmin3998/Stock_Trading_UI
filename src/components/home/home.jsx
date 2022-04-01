@@ -27,18 +27,26 @@ function Home(){
     const fetchData = async () =>{
         const res = await getStocks();
         setStocks(res.data);
-        setSelectedStock(res.data[0])
+        //setSelectedStock(res.data[0])
         console.log(res.data)
     }
 
     useEffect(() => {
         setInterval(()=>{
             fetchData();
-        }, [30000])
+        }, [3000])
         fetchData();
       }, []);
 
-      
+    function compare( a, b ) {
+        if ( a.stockSymbol < b.stockSymbol ){
+            return -1;
+        }
+        if ( a.stockSymbol > b.stockSymbol ){
+            return 1;
+        }
+        return 0;
+    }
 
     function stockClicked(item){
         setSelectedStock(item)
@@ -62,7 +70,7 @@ function Home(){
                             <th>Price</th>
                             {/* <th>Market Capitalization</th> */}
                         </tr>
-                    {search(stocks).map((item) => (
+                    {search(stocks.sort(compare)).map((item) => (
                         <tr key={item.stocksId} onClick= {()=> {
                             stockClicked(item)
                             }}>

@@ -87,16 +87,19 @@ function Register(){
             })
 
             if(response.data.success){
+                setError("")
                 setIsRegistered(true)
-                navigate("/login")
+                //navigate("/login")
             }
             else{
+                setIsRegistered(false)
                 setError("Registeration Failed")
             }
         
         } catch (error) {
             console.log(error)
             if(error?.response?.data?.error){
+                setIsRegistered(false)
                 setError(error.response.data.error)
             }
         }
@@ -135,8 +138,8 @@ function Register(){
             </div>
             {error && <div className='text-danger my-3'>{error}</div>}
             {isRegistered && 
-            <div class="popup" onclick={clickedPopup}>
-                <span class="popuptext" id="myPopup">Registered Successfully</span>
+            <div className='text-success my-3' >
+                Registered Successfully
             </div>
             }
         </div>

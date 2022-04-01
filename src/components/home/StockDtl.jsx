@@ -42,7 +42,7 @@ function StockDtl({selectedStock}){
                         <tr>
                             <td>${roundToTwoDigits(selectedStock?.stockPrice?.todayLow)}</td>
                             <td>${roundToTwoDigits(selectedStock?.stockPrice?.preClose)}</td> 
-                            <td>{selectedStock?.purchasedQuantity}</td>
+                            <td>${roundToTwoDigits(selectedStock?.purchasedQuantity * selectedStock?.stockPrice?.price)}</td>
                             <td>${roundToTwoDigits(selectedStock?.totalQuantity * selectedStock?.stockPrice?.price)}</td> 
                             <td>${roundToTwoDigits(selectedStock.stockPrice?.todayLow)}</td>
                             <td>${roundToTwoDigits(selectedStock.stockPrice?.todayHigh)}</td> 
