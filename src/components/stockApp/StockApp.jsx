@@ -16,6 +16,8 @@ import Header from "../header/header";
 
 
 function StockApp(){
+
+        //const [isLoggedIn, setIsLoggedIn] = useState(window.localStorage.getItem("username") ? true : false);
     
         //const LoginComponentWithNavigation = withNavigation(Login);
         return(

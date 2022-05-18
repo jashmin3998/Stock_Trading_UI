@@ -45,6 +45,7 @@ function AddStocks(){
     const[intialPrice, setIntialPrice] = useState()
     const[creationDate, setCreationDate] = useState()
     const[error, setError] = useState("")
+    const[successMsg, setSuccessMsg] = useState("")
     const[isAdmin, setIsAdmin] = useState(false)
 
     const handleStockNameChange=(event) =>{
@@ -56,6 +57,7 @@ function AddStocks(){
     }
     const handleTotalQuantityChange=(event) =>{
         setTotalQty(event.target.value) 
+        
     }
 
     const handlePurchasedQuantityChange=(event) =>{
@@ -87,6 +89,25 @@ function AddStocks(){
                 setError("! All the details are medatory.")
                 return;
             }
+
+            if(stockSymbol.length > 5){
+                setError("! Stock Symbol size must be less than 5 characters.")
+                return
+            }
+
+            if(price < 0){
+                setError("! Stock price must be positive.")
+                return
+            }
+
+            if(totalQuantity < purchasedQuantity){
+                setError("! Total quantity must be greater than purchased quantity.")
+                return
+            }
+
+            // if(error != ""){
+            //     return;
+            // }
             const response = await addStock({
                 name,
                 stockSymbol,
@@ -98,10 +119,17 @@ function AddStocks(){
 
             if(response.data.success){
                 console.log(response.data)
-                setError("Added Successfully")
+                setError("")
+                setSuccessMsg("Added Successfully")
+                setStockName()
+                setSSymbol()
+                setIntialPrice()
+                setPurchasedQty()
+                setTotalQty()
             }
             else{
                 console.log(response.data)
+                setSuccessMsg("")
                 setError("!Opps Failed to add stock. Try again")
             }
         } catch (error) {
@@ -153,6 +181,7 @@ function AddStocks(){
             
             <button className="btn btn-success" onClick={addClicked}>Add</button>
             {error && <div className='text-danger my-3'>{error}</div>}
+            {successMsg && <div className='text-success my-3'>{successMsg}</div>}
         </div>
         </>
     )

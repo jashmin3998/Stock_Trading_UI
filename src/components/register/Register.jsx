@@ -20,10 +20,11 @@ function Register(){
 
         if(event.target.value === ""){
             setError("!Username cannot be empty")
+            return
         }
-        else{
-            setUsername(event.target.value)
-        }
+        setError("")
+        setUsername(event.target.value)
+        
         
     }
 
@@ -31,30 +32,31 @@ function Register(){
          
         if(event.target.value === ""){
             setError("!Password cannot be empty")
+            return
         }
-        else{
-            setPwd(event.target.value)
-        }
+        setError("")
+        setPwd(event.target.value)
+        
     }
 
     const handleFirstnameChange=(event) =>{
         if(event.target.value === ""){
             setError("!First Name cannot be empty")
+            return
         }
-        else{
-            setFirstname(event.target.value)
-        }
+        setError("")
+        setFirstname(event.target.value)
+        
          
     }
 
     const handleLastnameChange=(event) =>{
         if(event.target.value === ""){
             setError("!Last Name cannot be empty")
+            return
         }
-        else{
-            setLastname(event.target.value)
-        }
-        
+        setError("")
+        setLastname(event.target.value)   
         
     }
 
@@ -62,20 +64,35 @@ function Register(){
         
         if(event.target.value === ""){
             setError("!Email cannot be empty")
+            return
         }
-        else{
-            setEmail(event.target.value) 
-        }
+        
+        setError("")
+        setEmail(event.target.value) 
+
     }
 
     async function registerClicked(){
 
         try {
 
+            if(error != ""){
+                return
+            }
+            if(pwd.length < 8){
+                setError("!Password must contain atleast 8 characters")
+                return
+            }
+            var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+            if (!email.match(mailformat)){
+                setError("!Email is incorrect")
+                return
+            }
             if(firstname === ""|| lastname  === "" || email  === "" || username  === "" || pwd  === ""){
                 setError("! All the details are medatory.")
                 return;
             }
+            
             
             const response = await registerUser({
                 firstname,

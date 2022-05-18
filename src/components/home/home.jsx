@@ -28,13 +28,13 @@ function Home(){
         const res = await getStocks();
         setStocks(res.data);
         //setSelectedStock(res.data[0])
-        console.log(res.data)
+        //console.log(res.data)
     }
 
     useEffect(() => {
         setInterval(()=>{
             fetchData();
-        }, [3000])
+        }, [7000])
         fetchData();
       }, []);
 

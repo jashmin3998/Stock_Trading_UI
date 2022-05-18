@@ -14,6 +14,8 @@ function Portfolio(){
   
 const [transactions, setTransactions] = useState([]);
 const [totalPandL, setTotalPandL] = useState();
+const [totalInvested, setTotalInvested] = useState();
+const [currentValuation, setCurrentValuation] = useState();
 
 //let transactions = []
 useEffect(() => {
@@ -24,12 +26,18 @@ useEffect(() => {
       );
       var jsonData = res.data;
       var totalProfit = 0;
+      var totalAmountInvested = 0;
+      var totalCurrentValue = 0;
       
       var allData = []
         for (var i = 0; i < jsonData.length; i++) {
            if(jsonData[i][1] > 0){
 
-            totalProfit = totalProfit + (jsonData[i][3]*jsonData[i][1]) - jsonData[i][2]
+            
+            totalAmountInvested = totalAmountInvested + jsonData[i][2];
+            totalCurrentValue = totalCurrentValue + (jsonData[i][3]*jsonData[i][1]);
+            totalProfit = totalProfit + (jsonData[i][3]*jsonData[i][1]) - jsonData[i][2];
+            //totalProfit = totalProfit + (jsonData[i][3]*jsonData[i][1]) - jsonData[i][2]
             var counter = {
               "stockSymbol": jsonData[i][0],
               "quantity": String(jsonData[i][1]),
@@ -41,6 +49,8 @@ useEffect(() => {
            }
         }
         setTotalPandL(totalProfit)
+        setTotalInvested(totalAmountInvested)
+        setCurrentValuation(totalCurrentValue)
         setTransactions(allData)
       
   }
@@ -104,6 +114,9 @@ const Example = () => (
       </Fields>
       
     </CRUDTable>
+
+    <div style={{fontSize : '1.5rem'}}> Total Invested Amount: ${roundToTwoDigits(totalInvested)} </div>
+    <div style={{fontSize : '1.5rem'}}> Current Portfolio Value: ${roundToTwoDigits(currentValuation)}</div>
   </div>
 );
 Example.propTypes = {};

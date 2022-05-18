@@ -186,6 +186,7 @@ const Example = () => (
       caption="Market Schedule"
       fetchItems={(payload) => service.fetchItems(payload)}
       
+      
     >
       <Fields>
         <Field name="dates" label="Date" placeholder="date"  />

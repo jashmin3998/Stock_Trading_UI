@@ -113,6 +113,7 @@ function TrasactionForm({
   async function handlePlaceOrder(){
 
     if(quantity < 1){
+        setMsg("")
         setError("! Incorrect Quantity")
         return;
     }
@@ -140,6 +141,9 @@ function TrasactionForm({
         if(res.data.success){
             setError("")
             setMsg("Order Successfully")
+            setPrice(roundToTwoDigits(selectedStock?.props?.stockPrice?.price))
+            setQuantity(0)
+
 
         }
         else{
@@ -165,7 +169,7 @@ function TrasactionForm({
             <Modal.Title className="mx-auto">{selectedStock?.props?.stockSymbol}</Modal.Title>
             <div className="d-flex flex-column align-items-left ml-3" style={{marginLeft : "20px"}}>
                 <div className='my-2'>
-                        Quantity: <input type="number" name="name" onChange={(e)=>{
+                        Quantity: <input type="number" name="name" value={quantity} onChange={(e)=>{
                             setQuantity(e.target.value);
                         }}/>
                 </div>
